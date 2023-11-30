@@ -13,8 +13,8 @@ access_token = 'eyJ0eXAiOiJKV1QiLCJvcmlnaW4iOiJFYXJ0aGRhdGEgTG9naW4iLCJzaWciOiJl
 
 @retry(wait_exponential_multiplier=1000, wait_exponential_max=10000)
 def download_data(daysandyears):
-    year, day = daysandyears
-    url = f"https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD06_L2/{year}/{day}/"
+    year= daysandyears
+    url = f"https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD06_L2/{year}"
     command = f"wget -e robots=off -m -np -R .html,.tmp -nH --cut-dirs=3 {url} --header 'Authorization: Bearer {access_token}' -P ."
     os.system(command)
 
@@ -23,9 +23,9 @@ def main():
     days = ['00' + str(_) for _ in range(1,10)] + ['0' + str(_) for _ in range(10,100)] + [str(_) for _ in range(100,366)]
 
     years = ["2018","2019" "2020", "2021", "2022", "2023"]
-    with ProcessPoolExecutor(max_workers=6) as executor:
+    with ProcessPoolExecutor(max_workers=4) as executor:
         # Use a list to store the futures
-        futures = [executor.submit(download_data, (year, day)) for year in years for day in days]
+        futures = [executor.submit(download_data, year) for year in years]
 
     # Wait for all futures to complete
     concurrent.futures.wait(futures)
