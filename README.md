@@ -2,6 +2,6 @@
 
 Download MODIS generates the MODIS datasets
 
-MakeVirtualEnv creates the virtual environment and neccessary libaries 
+MakeColocationsEnv creates the virtual environment and installs neccessary libaries for ShortMODIS 
 
 ShortMODIS finds the colocations
