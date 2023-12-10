@@ -1,7 +1,7 @@
 # SatelliteData
 
-Download MODIS generates the MODIS datasets
+DownloadMODISData.py generates the MODIS datasets
 
 MakeColocationsVirtualEnv creates the virtual environment and installs neccessary libaries for ShortMODIS 
 
-ShortMODIS finds the colocations
+ColocationsByMonth.py finds the colocations
