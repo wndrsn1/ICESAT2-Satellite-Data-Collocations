@@ -9,12 +9,14 @@ from shapely.geometry import Point
 import geopandas as gpd
 import concurrent.futures
 import dask.array as da
+from tqdm import tqdm 
 
 
 path = r"/nfsscratch/Users/wndrsn"
 os.chdir(path)
 
-def colocations_main(atl_data, modis_data, time_threshold_hours=48):
+
+def colocations_main(atl_data, modis_data, time_threshold_hours=None):
 
     threshold_distance = 0.2
 
@@ -74,6 +76,7 @@ def XRenderMODIS(filename):
     except Exception as e:
         print(f'error reading {filename} due to {e}')
         
+
 def HDFtoDF(filename, chunk_size=408):
     try:
         # Open the HDF file using h5py
@@ -113,7 +116,6 @@ def gps_to_datetime(gps_seconds):
     return gps_time
 
 
-
 def gregorian_day_to_month(year, day_of_year):
     # Create a datetime object for the given year and day_of_year
     date_object = datetime.strptime(f'{year}-{day_of_year}', '%Y-%j')
@@ -122,6 +124,15 @@ def gregorian_day_to_month(year, day_of_year):
     month = date_object.month
     return month
 
+def day_of_year(yyyymmdd):
+    yyyymmdd = (yyyymmdd[31:39])
+    # Convert the input string to a datetime object
+    date_object = datetime.strptime(yyyymmdd, '%Y%m%d')
+
+    # Get the day of the year
+    day_of_year = date_object.timetuple().tm_yday
+
+    return day_of_year
 
 def getFileTime():
     dateResultDF = pd.DataFrame([])
@@ -129,18 +140,17 @@ def getFileTime():
     mod_pd = pd.DataFrame({'filename':modfiles})
     mod_pd['day'] = mod_pd['filename'].str.slice(47,50)
     mod_pd['year'] = mod_pd['filename'].str.slice(42,46)
-
-    # Apply gregorian_day_to_month to each row
-    mod_pd['month'] = mod_pd.apply(lambda row: gregorian_day_to_month(row['year'], row['day']), axis=1)
-
+    print('MODIS Data found!')
+    
     # Concatenate results to dateResultDF
-    dateResultDF = pd.concat([dateResultDF, mod_pd[['year', 'month','filename']]], ignore_index=True)
+    dateResultDF = pd.concat([dateResultDF, mod_pd[['year', 'day','filename']]], ignore_index=True)
     atlfiles = glob.glob(os.path.join(path, '**/*.h5'), recursive=True)
     
-    atl_pd= pd.DataFrame({'filename':atlfiles})
+    atl_pd = pd.DataFrame({'filename':atlfiles})
+    atl_pd['day'] = atl_pd['filename'].apply(day_of_year)
     atl_pd['year'] = atl_pd['filename'].str.slice(31,35)
-    atl_pd['month'] = atl_pd['filename'].str.slice(35,37)
     dateResultDF = pd.concat((dateResultDF,atl_pd))
+    print('ATL data found!')
     return dateResultDF
 
 
@@ -150,27 +160,29 @@ def process_files_for_month(file):
 
 
 def main():
-    years = ['2019']
-    months = ['1','2','3']
+    years = ["2019" "2020", "2021", "2022", "2023"]
+    days = ['00' + str(_) for _ in range(1,10)] + ['0' + str(_) for _ in range(10,100)] + [str(_) for _ in range(100,366)]
     print('Getting files...')
     filetimes = getFileTime()
     print('Files found!')
     filetimes['year'] = filetimes['year'].astype(str)
-    filetimes['month'] = filetimes['month'].astype(str)
+    filetimes['day'] = filetimes['day'].astype(str)
 
     # Process files for each month using ProcessPoolExecutor
     with concurrent.futures.ProcessPoolExecutor() as executor:
         # Use a list to store the futures
         modis_results = []  # Initialize an empty list before the loop
         atl_results = []
+        atl_week = []
+        modis_week = []
         for year in years:
-            for month in months:
-                files = filetimes[(filetimes['year'] == str(year)) & ((filetimes['month'] == str(month)) | (filetimes['month'] == str(0)+str(month)))]
-
+            i = 0
+            for day in days:
+                files = filetimes[(filetimes['year'] == str(year)) & ((filetimes['day'] == str(day)) | (filetimes['day'] == str('00')+str(day)))]
                 files = files['filename']
 
                 modis_futures = [executor.submit(process_files_for_month, file) for file in files if file.endswith('.hdf')]    
-                modis_results = [future.result() for future in concurrent.futures.as_completed(modis_futures)]   
+                modis_results = [future.result() for future in tqdm(concurrent.futures.as_completed(modis_futures))]   
 
                 atl_futures = [executor.submit(process_files_for_month, file) for file in files if file.endswith('.h5')]
                 atl_results = [future.result() for future in concurrent.futures.as_completed(atl_futures)]
@@ -180,26 +192,40 @@ def main():
                 print(f'atl_results length = {len(atl_results)}')
 
                 # Concatenate the valid DataFrames
-                modis_results = pd.concat(modis_results, ignore_index=True)
-                atl_results = pd.concat(atl_results, ignore_index=True)
-                modis_results = pd.concat((modis_results, DummyTest()), ignore_index=True)
-                atl_results = pd.concat((atl_results, DummyTest()), ignore_index=True)
-                colocation = pd.DataFrame(colocations_main(atl_results, modis_results))
-                if len(colocation) < 4:
-                    print('Colocation Failure')
+                try:
+                    modis_results = pd.concat(modis_results, ignore_index=True)
+                    atl_results = pd.concat(atl_results, ignore_index=True)
+                    modis_results = pd.concat((modis_results, DummyTest(0)), ignore_index=True)
+                    atl_results = pd.concat((atl_results, DummyTest(0.1)), ignore_index=True)
+                    atl_week.append(atl_results)
+                    modis_week.append(modis_results)
+                    if i%7 == 0:
+                        atl_results = pd.concat(atl_week,ignore_index=True)
+                        modis_results = pd.concat(modis_week,ignore_index=True)
+                        colocation = pd.DataFrame(colocations_main(atl_results, modis_results))
+                        colocation.to_csv(f'colocations week {i/7} {year}.csv')
+                        if len(colocation) < 4:
+                            print('Colocation Failure')
+                        print(f'{day} successfully moved to CSV!')
+                        atl_week = []
+                        modis_week = []
+                    i+=1
+                    
+                except Exception as e:
+                    i+=1
+                    continue
+                
 
-                colocation.to_csv(f'colocations{month}{year}.csv')
-                print(f'{month} successfully moved to CSV!')
 
 
                 
-def DummyTest():
+def DummyTest(change):
 
     # Create a list of filenames
     filenames = ['filename1.txt', 'filename2.txt', 'filename3.txt', 'filename4.txt', 'filename5.txt']
 
     # Create a list of latitude values
-    lats = [37.783333, 37.338208, 37.774929, 37.529500, 37.421995]
+    lats = [37.783333+change, 37.338208+change, 37.774929+change, 37.529500+change, 37.421995+change]
 
     # Create a list of longitude values
     longs = [-122.416667, -121.886329, -122.419415, -122.271167, -122.083333]
@@ -209,7 +235,7 @@ def DummyTest():
 
     # Create a DataFrame
     df = pd.DataFrame({'filename': filenames, 'Lat0': lats, 'Long0': longs, 'Time0': times})
-
+    
     # Print the DataFrame
     return df
 
