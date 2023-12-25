@@ -134,14 +134,16 @@ def day_of_year(yyyymmdd):
 
     return day_of_year
 
+
 def getFileTime():
     dateResultDF = pd.DataFrame([])
-    modfiles = glob.glob(os.path.join('/nfsscratch/Users/wndrsn/MODL602/MOD06_L2', '**/*.hdf'), recursive=True)
+    modfiles = glob.glob(os.path.join('/nfsscratch/Users/wndrsn', '**/*.hdf'), recursive=True)
     mod_pd = pd.DataFrame({'filename':modfiles})
-    mod_pd['day'] = mod_pd['filename'].str.slice(47,50)
-    mod_pd['year'] = mod_pd['filename'].str.slice(42,46)
+    mod_pd['day'] = mod_pd['filename'].str.slice(39,42)
+    mod_pd['year'] = mod_pd['filename'].str.slice(34,38)
     print('MODIS Data found!')
-    
+
+
     # Concatenate results to dateResultDF
     dateResultDF = pd.concat([dateResultDF, mod_pd[['year', 'day','filename']]], ignore_index=True)
     atlfiles = glob.glob(os.path.join(path, '**/*.h5'), recursive=True)
@@ -176,9 +178,9 @@ def main():
         atl_week = []
         modis_week = []
         for year in years:
-            i = 0
+            i = 1
             for day in days:
-                files = filetimes[(filetimes['year'] == str(year)) & ((filetimes['day'] == str(day)) | (filetimes['day'] == str('00')+str(day)))]
+                files = filetimes[(filetimes['year'] == str(year)) & ((filetimes['day'] == str(day)) | (filetimes['day'] == str(i)))]
                 files = files['filename']
 
                 modis_futures = [executor.submit(process_files_for_month, file) for file in files if file.endswith('.hdf')]    
@@ -195,8 +197,8 @@ def main():
                 try:
                     modis_results = pd.concat(modis_results, ignore_index=True)
                     atl_results = pd.concat(atl_results, ignore_index=True)
-                    modis_results = pd.concat((modis_results, DummyTest(0)), ignore_index=True)
-                    atl_results = pd.concat((atl_results, DummyTest(0.1)), ignore_index=True)
+                    # modis_results = pd.concat((modis_results, DummyTest(0)), ignore_index=True)
+                    # atl_results = pd.concat((atl_results, DummyTest(0.1)), ignore_index=True)
                     atl_week.append(atl_results)
                     modis_week.append(modis_results)
                     if i%7 == 0:
@@ -212,32 +214,10 @@ def main():
                     i+=1
                     
                 except Exception as e:
+                    print(e)
                     i+=1
                     continue
                 
-
-
-
-                
-def DummyTest(change):
-
-    # Create a list of filenames
-    filenames = ['filename1.txt', 'filename2.txt', 'filename3.txt', 'filename4.txt', 'filename5.txt']
-
-    # Create a list of latitude values
-    lats = [37.783333+change, 37.338208+change, 37.774929+change, 37.529500+change, 37.421995+change]
-
-    # Create a list of longitude values
-    longs = [-122.416667, -121.886329, -122.419415, -122.271167, -122.083333]
-
-    # Create a list of time values
-    times = ['2023-11-28T12:00:00', '2023-11-28T12:10:00', '2023-11-28T12:20:00', '2023-11-28T12:30:00', '2023-11-28T12:40:00']
-
-    # Create a DataFrame
-    df = pd.DataFrame({'filename': filenames, 'Lat0': lats, 'Long0': longs, 'Time0': times})
-    
-    # Print the DataFrame
-    return df
 
 full_list = ['Solar_Zenith', 'Solar_Zenith_Day', 'Solar_Zenith_Night', 'Solar_Azimuth', 
 'Solar_Azimuth_Day', 'Solar_Azimuth_Night', 'Sensor_Zenith', 'Sensor_Zenith_Day', 'Sensor_Zenith_Night', 'Sensor_Azimuth', 
@@ -262,10 +242,3 @@ full_list = ['Solar_Zenith', 'Solar_Zenith_Day', 'Solar_Zenith_Night', 'Solar_Az
  'Retrieval_Failure_Metric_16', 'Retrieval_Failure_Metric_37', 'Retrieval_Failure_Metric_1621', 'Atm_Corr_Refl', 'Quality_Assurance_1km', 'Statistics_1km_sds']
 
 main()
-
-
-# modis_files = glob.glob(os.path.join(path, '**/*.hdf'), recursive=True)
-# atl_files = glob.glob(os.path.join(path, '**/*.h5'), recursive=True)
-
-# print(modis_files[0])
-# print(atl_files[100])
