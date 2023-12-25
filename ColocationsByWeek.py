@@ -31,9 +31,6 @@ def colocations_main(atl_data, modis_data, time_threshold_hours=None):
     # Perform a spatial join based on proximity with a specified threshold distance
     result = gdf_atl.sjoin_nearest(gdf_modis, how='inner',max_distance = threshold_distance)
 
-
-    # Print or log the column names in the resulting GeoDataFrame
-    print(result.columns)
     result['Time0_left'] = pd.to_datetime(result['Time0_left'])
     result['Time0_right'] = pd.to_datetime(result['Time0_right'])
 
@@ -116,14 +113,6 @@ def gps_to_datetime(gps_seconds):
     return gps_time
 
 
-def gregorian_day_to_month(year, day_of_year):
-    # Create a datetime object for the given year and day_of_year
-    date_object = datetime.strptime(f'{year}-{day_of_year}', '%Y-%j')
-
-    # Extract the month from the datetime object
-    month = date_object.month
-    return month
-
 def day_of_year(yyyymmdd):
     yyyymmdd = (yyyymmdd[31:39])
     # Convert the input string to a datetime object
@@ -191,7 +180,7 @@ def main():
 
                 # Check if each element in atl_results is a DataFrame before concatenating
                 atl_results = [result for result in atl_results if isinstance(result, pd.DataFrame)]
-                print(f'atl_results length = {len(atl_results)}')
+                
 
                 # Concatenate the valid DataFrames
                 try:
@@ -215,6 +204,7 @@ def main():
                     
                 except Exception as e:
                     print(e)
+                    print(f'atl_results length = {len(atl_results)} for day {i}')
                     i+=1
                     continue
                 
