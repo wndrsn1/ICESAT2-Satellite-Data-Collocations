@@ -13,7 +13,7 @@ all_files = glob.glob(os.path.join(path, f'**/*{filetype}'), recursive=True)
 filtered_files = [file for file in tqdm(all_files) if search_text in file.lower() and file.endswith(filetype)]
 df_lists = []
 for file in tqdm(filtered_files):
-    try:``
+    try:
         df_lists.append(pd.read_csv(file))
     except Exception as e:
         print(f'error processing {file} due to {e}')
