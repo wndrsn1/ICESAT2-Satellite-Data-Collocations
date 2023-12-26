@@ -90,6 +90,8 @@ def HDFtoDF(filename, chunk_size=408):
                 'Time0': delta_time_data.compute()
             })
             df['Time0'] = df['Time0'].apply(gps_to_datetime)
+            filename_df = pd.DataFrame([os.path.basename(filename)] * len(df), columns=['filename'])
+            df = pd.concat([df, filename_df], axis=1)
             print(f"{filename} successfully processed!")
         return df
 
@@ -200,6 +202,7 @@ def main():
                         print(f'{day} successfully moved to CSV!')
                         atl_week = []
                         modis_week = []
+                    print(f"\nfinished processing day {i}\n")
                     i+=1
                     
                 except Exception as e:
