@@ -6,4 +6,4 @@ MakeColocationsVirtualEnv creates the virtual environment and installs neccessar
 
 ColocationsByWeek.py finds the colocations
 
-Colocations_Data contains .csv files of MODIS files and their corresponding ICESAT files
+Colocations_Data contains .csv files of MODIS files and their corresponding ICESAT2 files
