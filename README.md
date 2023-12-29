@@ -1,4 +1,4 @@
-# MODIS ICESAT2 Satellite Data Project 
+# MODIS/ICESAT2 Satellite Data Project 
 
 DownloadMODISData.py generates the MODIS datasets
 
