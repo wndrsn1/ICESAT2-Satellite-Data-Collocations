@@ -4,6 +4,6 @@ DownloadMODISData.py generates the MODIS datasets
 
 MakeColocationsVirtualEnv creates the virtual environment and installs neccessary libaries for ShortMODIS 
 
-ColocationsByWeek.py finds the colocations
+ColocationsByWeek.py finds the colocations of MODIS and ICESAT2 on a week by week basis
 
 Colocations_Data contains .csv files of MODIS files and their corresponding ICESAT2 files
