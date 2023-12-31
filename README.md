@@ -8,5 +8,6 @@ ColocationsByWeek.py finds the colocations of MODIS and ICESAT2 on a week by wee
 
 Colocations_Data contains .csv files of MODIS files and their corresponding ICESAT2 files
 
+Below is a heat map indicating density of Colocations in 2019
 
 ![alt text](https://github.com/wndrsn1/MODIS-ICESAT2-Satellite-Data/blob/main/Colocation_Data/Map.png?raw=true)
