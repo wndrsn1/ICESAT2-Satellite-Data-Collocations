@@ -25,7 +25,7 @@ for chunk in tqdm(chunks, desc='Processing chunks'):
 
 del chunks, geometry_right, gdf_right
 
-chunks = pd.read_csv(filepath, usecols= ['Long0_right','Lat0_right'])
+chunks = pd.read_csv(filepath, usecols= [''Long0_left','Lat0_left''])
 
 # Process each chunk and create shapefiles
 for chunk in tqdm(chunks, desc='Processing chunks'):
