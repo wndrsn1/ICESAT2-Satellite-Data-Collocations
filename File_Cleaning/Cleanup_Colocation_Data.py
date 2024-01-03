@@ -5,7 +5,7 @@ from tqdm import tqdm
 # Specify the directory where your files are located
 path = '/nfsscratch/Users/wndrsn'
 filetype = '.csv'
-search_text = 'colocations week '
+search_text = '2020'
 # List all files in the directory
 all_files = glob.glob(os.path.join(path, f'**/*{filetype}'), recursive=True)
 
@@ -18,4 +18,4 @@ for file in tqdm(filtered_files):
     except Exception as e:
         print(f'error processing {file} due to {e}')
 df_lists = pd.concat(df_lists, ignore_index= True)
-df_lists.to_excel('/Users/wndrsn/colocationsListFinal.xlsx')
+df_lists.to_csv('/Users/wndrsn/colocationsListFinal.csv')
