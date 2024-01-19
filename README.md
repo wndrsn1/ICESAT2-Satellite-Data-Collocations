@@ -1,5 +1,6 @@
 # MODIS/ICESAT2 Satellite Data Project 
 
+![alt text](https://github.com/wndrsn1/MODIS-ICESAT2-Satellite-Data/blob/main/Colocation_Data/Heat%20Density%20Map.png)
 DownloadMODISData.py generates the MODIS datasets
 
 MakeColocationsVirtualEnv creates the virtual environment and installs neccessary libaries for ColocationsByWeek.py 
