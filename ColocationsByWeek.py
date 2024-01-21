@@ -153,8 +153,7 @@ def process_files_for_month(file):
 
 
 def main():
-    # years = ["2019", "2020", "2021", "2022", "2023"]
-    years = ["2020"]
+    years = ["2019", "2020", "2021", "2022", "2023"]
     days = ['00' + str(_) for _ in range(1,10)] + ['0' + str(_) for _ in range(10,100)] + [str(_) for _ in range(100,366)]
     print('Getting files...')
     filetimes = getFileTime()
