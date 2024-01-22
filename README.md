@@ -1,6 +1,6 @@
 # MODIS/ICESAT2 Satellite Data Project 
 
-![alt text](https://github.com/wndrsn1/MODIS-ICESAT2-Satellite-Data/blob/main/Colocation_Data/Heat%20Density%20Map.png)
+![alt text](https://github.com/wndrsn1/MODIS-ICESAT2-Satellite-Data/blob/main/Collocation_Data/Heat%20Density%20Map.png)
 
 In order to use access satellite data, first create an account here: https://www.earthdata.nasa.gov/
   
