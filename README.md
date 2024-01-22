@@ -4,7 +4,7 @@
 
 In order to use access satellite data, first create an account here: https://www.earthdata.nasa.gov/
   
-  generate a user token and save it for later on
+  Generate a user token and save it for later on
   
 With miniconda installed, MakeColocationsVirtualEnv.py can be used to set up the virtual environment and libraries needed to run the repository.
 
