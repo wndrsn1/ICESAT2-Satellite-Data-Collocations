@@ -3,7 +3,8 @@
 ![alt text](https://github.com/wndrsn1/MODIS-ICESAT2-Satellite-Data/blob/main/Colocation_Data/Heat%20Density%20Map.png)
 
 In order to use access satellite data, first create an account here: https://www.earthdata.nasa.gov/
-  Generate a user token and save it for later on
+  
+  generate a user token and save it for later on
   
 With miniconda installed, MakeColocationsVirtualEnv.py can be used to set up the virtual environment and libraries needed to run the repository.
 
