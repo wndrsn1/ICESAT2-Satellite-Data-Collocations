@@ -12,7 +12,7 @@ gdf_list = []
 for filename in filenames:
     output_shapefile_left = f'ATL_{filename}.shp'  # Add an underscore for better naming
     test = pd.read_csv(os.path.join('/Users/wndrsn', (filename + '.csv')),
-                       usecols=['filename_right', 'filename_left', 'Long0_left', 'Lat0_left'])
+                       usecols=['filename_right', 'filename_left', 'Long0_left', 'Lat0_left','Time0_left'])
     test = test.drop_duplicates(subset=['filename_left'], keep='first', inplace=False, ignore_index=False)
     test = test.drop_duplicates(subset=['filename_right'], keep='first', inplace=False, ignore_index=False)
     
