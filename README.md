@@ -16,7 +16,7 @@ The ICESAT2 data download program can be found here https://nsidc.org/data/data-
 
 MODIS data can be downloaded using the DownloadMODISData.py program.
 
-CALIPSO data can be downloaded using the DownloadCALIPSO.py program.
+CALIPSO data can be downloaded using the DownloadCALIPSO.py program. It is based on the shell script available on their website.
 
 Collocations data can be found by using CollocationsByWeek.py, simply enter the relevant file storage and configure collocation and time tolerances. 
 
