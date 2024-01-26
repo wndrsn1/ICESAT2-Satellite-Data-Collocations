@@ -1,7 +1,7 @@
 import os
 
 os.chdir('/nfsscratch/Users/wndrsn')
-access_token = ''
+access_token = input('Please enter Earthdata access token')
 
 
 def Download_data():    
