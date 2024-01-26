@@ -25,6 +25,7 @@ for filename in filenames:
 
 # Concatenate all GeoDataFrames in the list
 gdf_left = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True), crs='EPSG:4326')
-
+df_left = pd.concat(gdf_list,ignore_index = True)
+df_left.to_csv('Colocations_list.csv')
 # Save the final GeoDataFrame to a shapefile
 gdf_left.to_file(output_shapefile_left, mode='w', driver='ESRI Shapefile')
