@@ -45,6 +45,6 @@ print('Creating Colocation_Files.csv.. ')
 atl_files.to_csv(f'/Users/wndrsn/{filename}.csv')
 print('Created Colocation_Files.csv!')
 
-file_patterns = test['filename_right'].tolist() + test['filename_left'].tolist()
+file_patterns = atl_files.tolist()
 
 duplicate_h5_and_hdf_files(source_folder_path, destination_folder_path, file_patterns)
