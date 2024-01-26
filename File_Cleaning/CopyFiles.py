@@ -36,10 +36,13 @@ destination_folder_path = f"/nfsscratch/Users/wndrsn/{filename}"
 if os.path.exists(destination_folder_path) == False:
     os.mkdir(destination_folder_path) 
 test = pd.read_csv(os.path.join('/Users/wndrsn',(filename +'.csv')), usecols=['filename_right', 'filename_left'])
-test = test.drop_duplicates(subset=['filename_left'], keep='first', inplace=False, ignore_index=False)
-test = test.drop_duplicates(subset=['filename_right'], keep='first', inplace=False, ignore_index=False)
+Right_files = test['filename_right'].drop_duplicates()
+Left_files = test['filename_left'].drop_duplicates()
+atl_files = pd.DataFrame()
+atl_files = atl_files.append([Left_files,Right_files])
+
 print('Creating Colocation_Files.csv.. ')
-test.to_csv('/Users/wndrsn/Colocation_Files2020.csv')
+atl_files.to_csv(f'/Users/wndrsn/{filename}.csv')
 print('Created Colocation_Files.csv!')
 
 file_patterns = test['filename_right'].tolist() + test['filename_left'].tolist()
