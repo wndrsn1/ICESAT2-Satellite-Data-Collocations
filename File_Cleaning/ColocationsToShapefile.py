@@ -32,7 +32,7 @@ def create_shapefile(columnsList,side):
     gdf_left.to_file(output_shapefile_left, mode='w', driver='ESRI Shapefile')
 
 if __name__ == "__main__":
-    create_shapefile(['filename_left','filename_right', 'Long0_right', 'Lat0_right','Time0_right'],'Left')
-    create_shapefile(['filename_left','filename_right', 'Long0_left', 'Lat0_left','Time0_left'],'Right')
+    create_shapefile(['filename_left','filename_right', 'Long0_right', 'Lat0_right','Time0_right'],'Right')
+    create_shapefile(['filename_left','filename_right', 'Long0_left', 'Lat0_left','Time0_left'],'Left')
 
 
