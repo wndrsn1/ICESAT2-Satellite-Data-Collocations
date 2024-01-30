@@ -9,6 +9,9 @@ In order to use access satellite data, first create an account here: https://www
   - Generate a user token and save it for later on
   
 With miniconda installed, config.py can be used to set up the virtual environment and libraries needed to run the repository.
+``` python config.py ```
+
+``` conda activate ColocationsEnv ```
 
 The ICESAT2 data download program can be found here https://nsidc.org/data/data-access-tool/ATL04/versions/6
 
