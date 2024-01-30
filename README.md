@@ -8,7 +8,8 @@ In order to use access satellite data, first create an account here: https://www
   
   - Generate a user token and save it for later on
   
-With miniconda installed, config.py can be used to set up the virtual environment and libraries needed to run the repository.
+With miniconda installed, config.py is be used to set up the virtual environment and libraries needed to run the repository. Run with:
+
 ``` python config.py ```
 
 ``` conda activate ColocationsEnv ```
