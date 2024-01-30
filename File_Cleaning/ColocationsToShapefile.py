@@ -3,8 +3,8 @@ import geopandas as gpd
 from shapely.geometry import Point
 from tqdm import tqdm
 import os
-
-filenames = ['colocationsListFinal2019','colocationsListFinal2020','colocationsListFinal2021']
+years = ['2019','2020','2021']
+filenames = [f'colocationsListFinal{year}' for year in years]
 def create_shapefile(columnsList,side):
     # Initialize an empty list to store GeoDataFrames
     gdf_list = []
