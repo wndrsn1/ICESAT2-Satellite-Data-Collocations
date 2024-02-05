@@ -16,9 +16,9 @@ path = r"/nfsscratch/Users/wndrsn"
 os.chdir(path)
 
 
-def colocations_main(atl_data, modis_data, time_threshold_hours=None):
+def colocations_main(atl_data, modis_data, time_threshold_hours=3):
 
-    threshold_distance = 0.2
+    threshold_distance = 0.01
 
     # Create GeoDataFrame for ATL data
     geometry_atl = [Point(xy) for xy in zip(atl_data['Long0'], atl_data['Lat0'])]
@@ -55,13 +55,13 @@ def colocations_main(atl_data, modis_data, time_threshold_hours=None):
 def XRenderMODIS(filename):
     try:
         dataset = xr.open_dataset(filename, engine="netcdf4", drop_variables = full_list)
-        lat = np.array(dataset['Latitude'])
-        long = np.array(dataset['Longitude'])
-        time = np.array(dataset['Scan_Start_Time'])
+        lat = np.array(dataset['Latitude']).flatten()
+        long = np.array(dataset['Longitude']).flatten()
+        time = np.array(dataset['Scan_Start_Time']).flatten()
 
-        lat = pd.DataFrame(name(lat, 'Lat'))['Lat0']
-        long = pd.DataFrame(name(long, 'Long'))['Long0']
-        time = pd.DataFrame(name(time, 'Time'))['Time0']
+        lat = pd.DataFrame(lat, columns=['Lat0'])
+        long = pd.DataFrame(long, columns=['Long0'])
+        time = pd.DataFrame(time, columns=['Time0'])
 
         data = pd.DataFrame([])
         data = pd.concat((lat, long, time), axis=1)
@@ -98,16 +98,6 @@ def HDFtoDF(filename, chunk_size=408):
     except Exception as e:
         print(f'Error reading {filename} due to {e}')
 
-def name(file, label):
-    file = pd.DataFrame(file)
-    data = pd.DataFrame()
-    rows, columns = file.shape
-    for column in range(columns):
-        nameddata = pd.DataFrame()
-        nameddata[f'{label}{column}'] = file[column]
-        data = pd.concat((data, nameddata), axis=1)
-    return data
-
 
 def gps_to_datetime(gps_seconds):
     gps_epoch = datetime(2018, 1, 1)
@@ -137,7 +127,7 @@ def getFileTime():
 
     # Concatenate results to dateResultDF
     dateResultDF = pd.concat([dateResultDF, mod_pd[['year', 'day','filename']]], ignore_index=True)
-    atlfiles = glob.glob(os.path.join(path, '**/*.h5'), recursive=True)
+    atlfiles = glob.glob(os.path.join(path, '*.h5'))
     
     atl_pd = pd.DataFrame({'filename':atlfiles})
     atl_pd['day'] = atl_pd['filename'].apply(day_of_year)
@@ -153,7 +143,7 @@ def process_files_for_month(file):
 
 
 def main():
-    years = ["2019", "2020", "2021", "2022", "2023"]
+    years = ["2019", "2020", "2021", "2022"]
     days = ['00' + str(_) for _ in range(1,10)] + ['0' + str(_) for _ in range(10,100)] + [str(_) for _ in range(100,366)]
     print('Getting files...')
     filetimes = getFileTime()
@@ -169,6 +159,7 @@ def main():
         atl_week = []
         modis_week = []
         for year in years:
+            print(f'Processing year: {year}')
             i = 1
             for day in days:
                 files = filetimes[(filetimes['year'] == str(year)) & ((filetimes['day'] == str(day)) | (filetimes['day'] == str(i)))]
@@ -192,12 +183,12 @@ def main():
                     # atl_results = pd.concat((atl_results, DummyTest(0.1)), ignore_index=True)
                     atl_week.append(atl_results)
                     modis_week.append(modis_results)
-                    if i%7 == 0:
+                    if i%2 == 0:
                         atl_results = pd.concat(atl_week,ignore_index=True)
                         modis_results = pd.concat(modis_week,ignore_index=True)
                         colocation = pd.DataFrame(colocations_main(atl_results, modis_results))
-                        colocation.to_csv(f'colocations week {i/7} {year}.csv')
-                        if len(colocation) < 4:
+                        colocation.to_csv(f'Aerosol colocations day {i} {year}.csv')
+                        if len(colocation) < 2:
                             print('Colocation Failure')
                         print(f'{day} successfully moved to CSV!')
                         atl_week = []
