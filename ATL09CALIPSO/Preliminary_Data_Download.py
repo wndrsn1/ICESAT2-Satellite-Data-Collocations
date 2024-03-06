@@ -1,6 +1,18 @@
 import os
+import argparse
 
-os.chdir('/nfsscratch/Users/wndrsn/CALIPSOATL09')
+# Create an argument parser
+parser = argparse.ArgumentParser(description="Set directory to the specified path")
+
+# Add an argument for the path
+parser.add_argument("path", type=str, help="Path to set the directory to")
+
+# Parse the arguments
+args = parser.parse_args()
+
+# Set the directory to the specified path
+os.chdir(args.path)
+
 CALIPSO_files = ['CAL_LID_L1-Standard-V4-10.2020-04-02T04-02-09ZN.hdf',
                 'CAL_LID_L1-Standard-V4-10.2020-04-05T04-17-39ZN.hdf',
                 'CAL_LID_L1-Standard-V4-10.2020-04-06T13-54-33ZD.hdf',
@@ -39,6 +51,7 @@ CALIPSO_files = ['CAL_LID_L1-Standard-V4-10.2020-04-02T04-02-09ZN.hdf',
                 'CAL_LID_L1-Standard-V4-10.2019-10-05T14-59-15ZN.hdf',
                 'CAL_LID_L1-Standard-V4-10.2019-10-20T18-38-44ZD.hdf',
                 'CAL_LID_L1-Standard-V4-10.2019-12-16T01-18-44ZN.hdf']
+
 ATL_files = ['ATL09_20200402032743_01010701_006_03.h5',
             'ATL09_20200405034504_01470701_006_03.h5',
             'ATL09_20200406141927_01690701_006_02.h5',
@@ -77,6 +90,7 @@ ATL_files = ['ATL09_20200402032743_01010701_006_03.h5',
             'ATL09_20191005142530_01330501_006_02.h5',
             'ATL09_20191020172626_03640501_006_02.h5',
             'ATL09_20191216005530_12240501_006_01.h5']
+
 access_token = 'eyJ0eXAiOiJKV1QiLCJvcmlnaW4iOiJFYXJ0aGRhdGEgTG9naW4iLCJzaWciOiJlZGxqd3RwdWJrZXlfb3BzIiwiYWxnIjoiUlMyNTYifQ.eyJ0eXBlIjoiVXNlciIsInVpZCI6InduZHJzbiIsImV4cCI6MTcxNDI0OTI0NCwiaWF0IjoxNzA5MDY1MjQ0LCJpc3MiOiJFYXJ0aGRhdGEgTG9naW4ifQ.0bIIp8ZwuXZThckgonWi1nuQNIT70dmD07vzQFuMhj06bqCdd9zXF-_9m_1zMz2Xgm1d4ZKWHLsSV4-TvHE1dNlbSnv_fH0rJKx_ZByJfw8I9JjJAOzkbnAh6G_qlj88UiR7CDXnGfceJR1H4__HEMkzIhKRs_4a9ynXNvlIyOeb7gIuZPT0tyFhWjTkrsHkr4tBaYhmetXq_UvJZJGhkdy2nLKVr-b9_Upk3HALre6G_S9FPAy5uGuTvVxj4KpHEJARdVDgbUNIAoiEXiNpOLN2AKK9Qa1KJUOrw8JISCUDnJMD58vqQdNALCbsUEd4DX5GKBBc7_VstiZgAp4ZDw'
 
 def Download_data():
