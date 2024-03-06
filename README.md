@@ -15,7 +15,7 @@ Run:
 
 ``` python config.py ```
 
-``` conda activate ColocationsEnv ```
+``` conda activate CollocationsEnv ```
 
 The ICESAT2 data download program can be found here https://nsidc.org/data/data-access-tool/ATL04/versions/6
 
