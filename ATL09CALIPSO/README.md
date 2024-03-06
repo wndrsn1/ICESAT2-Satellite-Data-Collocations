@@ -1,4 +1,4 @@
 # Download Data using:
-``` python Preliminary_Data_Download.py <path> ```
+``` python MODIS-ICESAT2-Satellite-Data/ATL09CALIPSO/Preliminary_Data_Download.py <path> ```
 # Generate histogram using
-``` python HistogramCALIPSOATL09.py <path_to_files> ```
+``` python MODIS-ICESAT2-Satellite-Data/ATL09CALIPSO/HistogramCALIPSOATL09.py <path_to_files> ```
