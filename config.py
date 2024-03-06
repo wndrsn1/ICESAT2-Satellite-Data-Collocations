@@ -3,10 +3,10 @@ import subprocess
 import sys
 
 
-conda_env_name = "ColocationsEnv"
+conda_env_name = "CollocationsEnv"
 
 def main():
-    conda_libraries = ['pandas','numpy','h5py','xarray','shapely','geopandas','dask','tqdm',plotly]  # Add more libraries as needed
+    conda_libraries = ['pandas','numpy','h5py','xarray','shapely','geopandas','dask','tqdm','plotly']  # Add more libraries as needed
     conda_install(conda_libraries)
 
 
