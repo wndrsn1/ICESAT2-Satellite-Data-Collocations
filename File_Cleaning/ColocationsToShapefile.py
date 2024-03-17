@@ -1,38 +1,44 @@
-import pandas as pd
-import geopandas as gpd
-from shapely.geometry import Point
-from tqdm import tqdm
 import os
-years = ['2019','2020','2021']
-filenames = [f'colocationsListFinal{year}' for year in years]
-def create_shapefile(columnsList,side):
-    # Initialize an empty list to store GeoDataFrames
-    gdf_list = []
+import glob
+import pandas as pd
+from tqdm import tqdm
+from shapely import Point
+import geopandas as gpd
+import argparse
 
-    for filename in filenames:
-        output_shapefile_left = f'CollocationsRight.shp'  # Add an underscore for better naming
-        test = pd.read_csv(os.path.join('/Users/wndrsn', (filename + '.csv')),
-                        usecols=columnsList)
-        test = test.drop_duplicates(subset=['filename_left'], keep='first', inplace=False, ignore_index=False)
-        test = test.drop_duplicates(subset=['filename_right'], keep='first', inplace=False, ignore_index=False)
-        
-        # Process the left side
-        geometry_left = [Point(xy) for xy in zip(test['Long0_right'], test['Lat0_right'])]
-        gdf_left2 = gpd.GeoDataFrame(test, geometry=geometry_left, crs='EPSG:4326')
+# Create an argument parser
+parser = argparse.ArgumentParser(description="Set directory to the specified path")
 
-        # Append gdf_left2 to the list
-        gdf_list.append(gdf_left2)
-        print(f'Finished processing {filename}!')
+# Add an argument for the path
+parser.add_argument("path", type=str, help="Path to set the directory to")
 
-    # Concatenate all GeoDataFrames in the list
-    gdf_left = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True), crs='EPSG:4326')
-    df_left = pd.concat(gdf_list,ignore_index = True)
-    df_left.to_csv(f'Colocations_list_{side}.csv')
-    # Save the final GeoDataFrame to a shapefile
-    gdf_left.to_file(output_shapefile_left, mode='w', driver='ESRI Shapefile')
+# Parse the arguments
+args = parser.parse_args()
 
-if __name__ == "__main__":
-    create_shapefile(['filename_left','filename_right', 'Long0_right', 'Lat0_right','Time0_right'],'Right')
-    create_shapefile(['filename_left','filename_right', 'Long0_left', 'Lat0_left','Time0_left'],'Left')
+# Set the directory to the specified path
+path = args.path
 
+filetype = '.csv'
+# List all files in the directory
+all_files = glob.glob(os.path.join(path, f'**/*{filetype}'), recursive=True)
 
+gdf_list = []
+output_shapefile = f'Collocations_2019.shp'  
+for filename in tqdm(all_files):
+    
+    test = pd.read_csv(os.path.join(filename,usecols=['Lat0_left','Long0_left']))
+    
+    # Process the left side
+    geometry_left = [Point(xy) for xy in zip(test['Long0_right'], test['Lat0_right'])]
+    gdf_left2 = gpd.GeoDataFrame(test, geometry=geometry_left, crs='EPSG:4326')
+
+    # Append gdf_left2 to the list
+    gdf_list.append(gdf_left2)
+    print(f'Finished processing {filename}!')
+
+# Concatenate all GeoDataFrames in the list
+gdf_left = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True), crs='EPSG:4326')
+df_left = pd.concat(gdf_list,ignore_index = True)
+df_left.to_csv(f'{output_shapefile}.csv')
+# Save the final GeoDataFrame to a shapefile
+gdf_left.to_file(output_shapefile, mode='w', driver='ESRI Shapefile')
