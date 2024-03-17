@@ -1,6 +1,19 @@
 import os
+import argparse
 
-os.chdir('/nfsscratch/Users/wndrsn')
+# Create an argument parser
+parser = argparse.ArgumentParser(description="Set directory to the specified path")
+
+# Add an argument for the path
+parser.add_argument("path", type=str, help="Path to set the directory to")
+
+# Parse the arguments
+args = parser.parse_args()
+
+# Set the directory to the specified path
+path = args.path
+os.chdir(path)
+
 access_token = input('Please enter Earthdata access token')
 
 
