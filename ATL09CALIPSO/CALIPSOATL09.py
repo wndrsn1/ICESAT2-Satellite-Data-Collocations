@@ -10,9 +10,19 @@ import geopandas as gpd
 import concurrent.futures
 import dask.array as da
 from tqdm import tqdm 
+import argparse
 
+# Create an argument parser
+parser = argparse.ArgumentParser(description="Set directory to the specified path")
 
-path = r"/nfsscratch/Users/wndrsn"
+# Add an argument for the path
+parser.add_argument("path", type=str, help="Path to set the directory to")
+
+# Parse the arguments
+args = parser.parse_args()
+
+# Set the directory to the specified path
+path = args.path
 os.chdir(path)
 
 
@@ -148,7 +158,7 @@ def get_calyear(year):
 
 def getFileTime():
     dateResultDF = pd.DataFrame([])
-    CALIPSOFiles = glob.glob(os.path.join(f'{path}/CALIPSOData/2019', '**/*.hdf'), recursive=True)
+    CALIPSOFiles = glob.glob(os.path.join(f'{path}', '**/*.hdf'), recursive=True)
     CALIPSO = pd.DataFrame({'filename':CALIPSOFiles})
     CALIPSO['day'] = CALIPSO['filename'].apply(CALtoDayYear)
     CALIPSO['year'] = CALIPSO['filename'].apply(get_calyear)
@@ -156,7 +166,7 @@ def getFileTime():
     print('MODIS Data found!')
     # Concatenate results to dateResultDF
     dateResultDF = pd.concat([dateResultDF, CALIPSO[['year', 'day','filename']]], ignore_index=True)
-    atlfiles = glob.glob(os.path.join(f'{path}/ATL09', '**/*.h5'), recursive=True)
+    atlfiles = glob.glob(os.path.join(f'{path}', '**/*.h5'), recursive=True)
 
     atl_pd = pd.DataFrame({'filename':atlfiles})
     atl_pd['day'] = atl_pd['filename'].apply(day_of_year)
@@ -217,7 +227,7 @@ def main():
                     atl_results = pd.concat(atl_week,ignore_index=True)
                     modis_results = pd.concat(modis_week,ignore_index=True)
                     colocation = pd.DataFrame(colocations_main(atl_results, modis_results))
-                    colocation.to_csv(f'/Users/wndrsn/Collocations_Data/Aerosol colocations day {i} {year}.csv')
+                    colocation.to_csv(f'{path}/Aerosol colocations day {i} {year}.csv')
                     if len(colocation) < 2:
                         print('Colocation Failure')
                     print(f'{day} successfully moved to CSV!')
